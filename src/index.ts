@@ -2,22 +2,21 @@
  * watchFavicon watches the page's favicons and swaps them out for a dark-mode
  * version when needed.
  */
-function watchFavicon() {
+function watchFavicon(): () => void {
   if (
     typeof window === "undefined" ||
-    typeof document === "undefined" ||
     typeof window.matchMedia === "undefined" ||
     // @ts-ignore
     typeof window.msMatchMedia === "undefined"
   ) {
-    return;
+    return () => {};
   }
 
   const q = (selector: string): HTMLLinkElement[] =>
     Array.prototype.slice.call(document.querySelectorAll(selector));
 
   const mq = window.matchMedia("(prefers-color-scheme: dark)");
-  const favicons = q("link[rel='shortcut icon'],link[rel='icon']");
+  const favicons = q("link[rel*='icon']");
   const maskIcons = q("link[rel='mask-icon'");
 
   const handleMediaMatch = (e: MediaQueryListEvent) => {
@@ -25,10 +24,13 @@ function watchFavicon() {
   };
 
   const updateIcons = (isDarkMode: boolean = false) => {
-    const href = isDarkMode ? "data-dark-href" : "data-light-href";
-    const color = isDarkMode ? "data-dark-color" : "data-light-color";
-    favicons.forEach((el) => (el.href = el.getAttribute(href)));
-    maskIcons.forEach((el) => el.setAttribute("color", el.getAttribute(color)));
+    const str = isDarkMode ? "dark" : "light";
+    favicons.forEach(
+      (el) => (el.href = el.getAttribute("data-" + str + "-href"))
+    );
+    maskIcons.forEach((el) =>
+      el.setAttribute("color", el.getAttribute("data-" + str + "-color"))
+    );
   };
 
   // Copy the current value to a light data-* attribute.
