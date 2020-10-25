@@ -1,0 +1,43 @@
+{
+  "name": "nightlight",
+  "version": "1.0.0",
+  "description": "Light- and dark-mode favicons, made easy.",
+  "source": "src/index.ts",
+  "main": "dist/index.js",
+  "module": "dist/index.module.js",
+  "unpkg": "dist/index.umd.js",
+  "scripts": {
+    "build": "microbundle",
+    "prepublishOnly": "npm run build",
+    "dev": "microbundle watch"
+  },
+  "devDependencies": {
+    "microbundle": "^0.12.4",
+    "prettier": "^2.1.2"
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rosszurowski/nightlight.git"
+  },
+  "bugs": {
+    "url": "https://github.com/rosszurowski/nightlight/issues"
+  },
+  "author": "Ross Zurowski",
+  "homepage": "https://github.com/rosszurowski/nightlight/#readme",
+  "keywords": [
+    "favicon",
+    "icon",
+    "dark",
+    "light",
+    "dark mode",
+    "dark theme",
+    "light theme",
+    "color scheme",
+    "prefers-color-scheme"
+  ],
+  "license": "MIT"
+}
