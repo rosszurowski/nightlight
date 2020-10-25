@@ -5,47 +5,35 @@
 function watchFavicon(): () => void {
   if (
     typeof window === "undefined" ||
-    typeof window.matchMedia === "undefined" ||
-    // @ts-ignore
-    typeof window.msMatchMedia === "undefined"
+    typeof window.matchMedia === "undefined"
   ) {
     return () => {};
   }
 
-  const q = (selector: string): HTMLLinkElement[] =>
-    Array.prototype.slice.call(document.querySelectorAll(selector));
+  const q = (selector: string): HTMLLinkElement | null =>
+    document.querySelector(selector);
 
   const mq = window.matchMedia("(prefers-color-scheme: dark)");
-  const favicons = q("link[rel*='icon']");
-  const maskIcons = q("link[rel='mask-icon'");
+  const fv = q("link[rel='shortcut icon']") || q("link[rel='icon']");
+  const mi = q("link[rel='mask-icon']");
 
   const handleMediaMatch = (e: MediaQueryListEvent) => {
     updateIcons(e.matches);
   };
 
   const updateIcons = (isDarkMode: boolean = false) => {
-    const str = isDarkMode ? "dark" : "light";
-    favicons.forEach(
-      (el) => (el.href = el.getAttribute("data-" + str + "-href"))
-    );
-    maskIcons.forEach((el) =>
-      el.setAttribute("color", el.getAttribute("data-" + str + "-color"))
-    );
+    const str = isDarkMode ? "data-dark-" : "data-light-";
+    fv.href = fv.getAttribute(str + "href");
+    mi.setAttribute("color", mi.getAttribute(str + "color"));
   };
 
   // Copy the current value to a light data-* attribute.
-  favicons.forEach((el) => {
-    if (el.hasAttribute("data-light-href")) {
-      return;
-    }
-    el.setAttribute("data-light-href", el.href);
-  });
-  maskIcons.forEach((el) => {
-    if (el.hasAttribute("data-light-color")) {
-      return;
-    }
-    el.setAttribute("data-light-color", el.getAttribute("color"));
-  });
+  if (!fv.hasAttribute("data-light-href")) {
+    fv.setAttribute("data-light-href", fv.href);
+  }
+  if (!mi.hasAttribute("data-light-color")) {
+    mi.setAttribute("data-light-color", mi.getAttribute("color"));
+  }
 
   mq.addEventListener("change", handleMediaMatch);
   updateIcons(mq.matches);
